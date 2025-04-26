@@ -1,20 +1,54 @@
 import React, { useState } from "react";
-import ShoppingList from "./ShoppingList";
-import Header from "./Header";
-import itemData from "../data/items";
+import ItemForm from "./ItemForm";
+import Filter from "./Filter";
+import ItemList from "./ItemList";
+import itemsData from "../data/items";
 
 function App() {
-  const [items, setItems] = useState(itemData);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [items, setItems] = useState(itemsData);
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [darkMode, setDarkMode] = useState(false); // add dark mode state
 
-  function handleDarkModeClick() {
-    setIsDarkMode((isDarkMode) => !isDarkMode);
+  function handleAddItem(newItem) {
+    setItems([...items, newItem]);
   }
 
+  function handleSearchChange(searchValue) {
+    setSearch(searchValue);
+  }
+
+  function handleCategoryChange(categoryValue) {
+    setSelectedCategory(categoryValue);
+  }
+
+  function toggleDarkMode() {
+    setDarkMode((dark) => !dark);
+  }
+
+  const itemsToDisplay = items.filter((item) => {
+    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <div className={"App " + (isDarkMode ? "dark" : "light")}>
-      <Header isDarkMode={isDarkMode} onDarkModeClick={handleDarkModeClick} />
-      <ShoppingList items={items} />
+    <div className={darkMode ? "App dark" : "App light"}>
+      <header>
+        <h1>Shopping List</h1>
+        <button onClick={toggleDarkMode}>
+          {darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        </button>
+      </header>
+
+      <ItemForm onItemFormSubmit={handleAddItem} />
+      <Filter
+        search={search}
+        onSearchChange={handleSearchChange}
+        selectedCategory={selectedCategory}
+        onCategoryChange={(e) => handleCategoryChange(e.target.value)}
+      />
+      <ItemList items={itemsToDisplay} />
     </div>
   );
 }

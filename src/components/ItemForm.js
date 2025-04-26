@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import { v4 as uuid } from "uuid";
 
 function ItemForm({ onItemFormSubmit }) {
-  const [name, setName] = useState("");
-  const [category, setCategory] = useState("Produce");
+  const [name, setName] = useState(""); // Controlled input for item name
+  const [category, setCategory] = useState("Produce"); // Controlled select, default "Produce"
 
   function handleSubmit(e) {
     e.preventDefault();
     const newItem = {
-      id: Math.random().toString(), 
-      name,
-      category,
+      id: uuid(),
+      name: name,
+      category: category,
     };
     onItemFormSubmit(newItem);
+    // Optionally, reset the form after submit
     setName("");
     setCategory("Produce");
   }
@@ -20,9 +22,9 @@ function ItemForm({ onItemFormSubmit }) {
     <form className="NewItem" onSubmit={handleSubmit}>
       <label>
         Name:
-        <input 
-          type="text" 
-          name="name" 
+        <input
+          type="text"
+          name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -30,7 +32,7 @@ function ItemForm({ onItemFormSubmit }) {
 
       <label>
         Category:
-        <select 
+        <select
           name="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
